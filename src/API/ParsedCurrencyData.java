@@ -89,4 +89,20 @@ public class ParsedCurrencyData {
             this.NameSym.put(this.SymName.get(s), s);
         }
     }
+
+    public String getBase() {
+        return this.base;
+    }
+
+    public Hashtable<String, Double> getSymVal() {
+        return this.SymVal;
+    }
+
+    public Hashtable<String, String> getNameSym() {
+        return this.NameSym;
+    }
+
+    public Hashtable<String, String> getSymName() {
+        return this.SymName;
+    }
 }
