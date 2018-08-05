@@ -14,7 +14,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            throw new NullPointerException();
+            Window w = new Window();
+            w.begin();
 
         }
         catch(Exception e){

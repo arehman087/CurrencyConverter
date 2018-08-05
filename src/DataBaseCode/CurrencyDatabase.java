@@ -1,13 +1,12 @@
 package DataBaseCode;
+
 import API.ParsedCurrencyData;
-import com.google.gson.internal.bind.SqlDateTypeAdapter;
-
-
 import java.io.IOException;
 import java.sql.*;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
+
 
 public class CurrencyDatabase {
     private Connection conn;
@@ -170,4 +169,24 @@ public class CurrencyDatabase {
         return null;
     }
 
+    public ArrayList<String> getNames(){
+        ResultSet rs = this.getAllNameSym();
+        ArrayList<String> sym = new ArrayList<String>();
+        try{
+            while(rs.next()){
+                sym.add(rs.getString("NAME"));
+            }
+        }
+        catch(Exception ex){
+            ex.getMessage();
+            ex.printStackTrace();
+
+        }
+        return sym;
+    }
+
+    public double calculateCurrency(double from, double to){
+        double result =  from/to;
+        return result;
+    }
 }
