@@ -4,18 +4,12 @@ import DataBaseCode.CurrencyDatabase;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -27,6 +21,7 @@ public class Window extends Application {
     private BorderPane borderPane;
     private GridPane layout;
     private Button convertButton;
+    private VBox titleHolder;
 
     private ChoiceBox<String> beforeList;
     private ChoiceBox<String> afterList;
@@ -34,11 +29,14 @@ public class Window extends Application {
     private TextArea outputText;
 
 
+
+
     public Window(){
         this.cd = new CurrencyDatabase();
 
 
     }
+
     public void begin(){ launch(); }
 
     @Override
@@ -52,16 +50,25 @@ public class Window extends Application {
         primaryStage.show();
     }
 
+    /**
+     * sets the stage and title
+     * @param s
+     */
     private void setStage(Stage s){
         this.stage = s;
         this.stage.setTitle("Currency Converter");
     }
 
+    /**
+     * Organises the panes to hold different objects
+     */
     private void setPane(){
         this.borderPane = new BorderPane();
         this.layout = new GridPane();
         this.layout.setPrefSize(250, 150);
-
+        this.titleHolder = new VBox();
+        this.titleHolder.setPrefSize(250, 100);
+        this.titleHolder.setPadding(new Insets(50, 50, 50, 100));
 
         this.layout.setPadding(new Insets(10,10,10,10));
         this.layout.setHgap(8);
@@ -70,15 +77,22 @@ public class Window extends Application {
         this.layout.addColumn(3);
         this.layout.addRow(3);
 
+        this.borderPane.setTop(titleHolder);
         this.borderPane.setCenter(this.layout);
-        this.borderPane.setPadding(new Insets(100, 50, 50, 50));
+        this.borderPane.setPadding(new Insets(0, 50, 50, 50));
     }
 
+    /**
+     * sets the scene
+     */
     private void setInnerScene(){
         this.scene = new Scene(this.borderPane, 400, 300);
         this.stage.setScene(this.scene);
     }
 
+    /**
+     * set up all the buttons, dropdown menus, and labels
+     */
     private void setChoices(){
         this.beforeList = new ChoiceBox<>();
         this.afterList = new ChoiceBox<>();
@@ -121,17 +135,26 @@ public class Window extends Application {
         this.afterList.setPrefSize(100, 20);
         GridPane.setConstraints(afterList, 2,1);
 
-        Button b = new Button();
-        b.setOnAction(e->this.buttonAction());
-        b.setText("Convert");
-        b.setPrefSize(75, 20);
-        GridPane.setConstraints(b, 1, 1);
+        this.convertButton = new Button();
+        this.convertButton.setOnAction(e->this.buttonAction());
+        this.convertButton.setText("Convert");
+        this.convertButton.setPrefSize(75, 20);
+        GridPane.setConstraints(this.convertButton, 1, 1);
 
-        this.layout.getChildren().addAll(fromLabel, toLabel, convertLabel, this.beforeList, this.afterList, b,this.inputText,this.outputText);
+        Label title = new Label("Currency Conversion");
+        title.setScaleX(2);
+        title.setScaleY(2);
+        this.titleHolder.getChildren().add(title);
+
+        this.layout.getChildren().addAll(fromLabel, toLabel, convertLabel, this.beforeList, this.afterList, this.convertButton,this.inputText,this.outputText);
 
 
     }
 
+    /**
+     * action method for the convert button, puts the reult of the currency
+     * into a the output text.
+     */
     private void buttonAction(){
         String beforeSym = this.cd.getSymbol(this.beforeList.getValue());
         String afterSym = this.cd.getSymbol(this.afterList.getValue());
@@ -142,10 +165,30 @@ public class Window extends Application {
         }
 
         try{
-            //Start Calculation...
+
+            try{
+                Double.parseDouble(this.inputText.getText());
+            }
+            catch (Exception ex){
+                AlertBox.display("ERROR", "PLEASE ENTER A VALID VALUE INTO TEXTBOX");
+                return;
+            }
+
+            double from = this.cd.getValues(beforeSym);
+            double to = this.cd.getValues(afterSym);
+
+
+            double res = this.cd.calculateCurrency(from, to);
+
+            BigDecimal bda = new BigDecimal(res);
+            BigDecimal bdb = new BigDecimal(this.inputText.getText());
+
+            BigDecimal bdc = bda.multiply(bdb).setScale(2, BigDecimal.ROUND_HALF_UP);
+            this.outputText.setText(bdc.toString());
         }
         catch(Exception e){
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
 

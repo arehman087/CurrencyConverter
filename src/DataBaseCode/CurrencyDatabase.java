@@ -31,6 +31,9 @@ public class CurrencyDatabase {
 
     }
 
+    /**
+     * Connects to the API and puts the data into a database to avoid too many queries.
+     */
     public void populateDB(){
 
         try {
@@ -71,6 +74,9 @@ public class CurrencyDatabase {
         }
     }
 
+    /**
+     * removes the data from the database, used to update currency data
+     */
     public void deleteDB(){
         try{
             Statement stmt = conn.createStatement();
@@ -84,6 +90,11 @@ public class CurrencyDatabase {
         }
     }
 
+    /**
+     * Gets the name of the currency
+     * @param s The symbol gets inputted to retrieve the name
+     * @return The name of the currency
+     */
     public String getName(String s){
 
 
@@ -108,6 +119,11 @@ public class CurrencyDatabase {
         return "FAILED";
     }
 
+    /**
+     * gets the Symbol for the Currency from the name of the string
+     * @param s Name of the currency
+     * @return they symbol for the currency name
+     */
     public String getSymbol(String s){
         try {
             PreparedStatement ps = conn.prepareStatement("SELECT SYMBOL FROM symbol_to_name WHERE NAME = (?);");
@@ -130,6 +146,11 @@ public class CurrencyDatabase {
         return "FAILED";
     }
 
+    /**
+     * gets the value of the currency based on the symbol
+     * @param s the symbol of the currency
+     * @return a double value of the currency
+     */
     public double getValues(String s){
         try{
             PreparedStatement ps = conn.prepareStatement("SELECT VALUE FROM symbol_to_value WHERE SYMBOL = (?);");
@@ -152,6 +173,10 @@ public class CurrencyDatabase {
         return -1.0;
     }
 
+    /**
+     * gets all the names and the symbols
+     * @return a ResultSet of all names and symbols
+     */
     public ResultSet getAllNameSym(){
 
         try{
@@ -185,6 +210,12 @@ public class CurrencyDatabase {
         return sym;
     }
 
+    /**
+     * Calculates value of new currency based on old currency
+     * @param from value converting from previous currency
+     * @param to new currency being converted to
+     * @return double value of new currency
+     */
     public double calculateCurrency(double from, double to){
         double result =  from/to;
         return result;

@@ -11,6 +11,11 @@ import javafx.scene.control.Label;
 
 public class AlertBox {
 
+    /**
+     * Shows a popup message to the user
+     * @param title title of the box
+     * @param message the message that needs to be displayed to the user
+     */
     public static void display(String title, String message){
         Stage window = new Stage();
 
